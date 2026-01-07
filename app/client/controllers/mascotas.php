@@ -1,29 +1,5 @@
 <?php
 
-function createRegister($conexion, $data)
-{
-
-    // Agregar una fecha por defecto (por ejemplo, el primer día del mes actual)
-    $year = date('Y');
-    $month = $data['meses'];
-    $day = '01';
-    $data['fechaCreada'] = "$year-$month-$day";
-    // Construir la consulta de forma dinámica
-    $columns = implode(", ", array_keys($data));
-    $placeholders = implode(", ", array_fill(0, count($data), "?"));
-    $sql = "INSERT INTO registros ($columns) VALUES ($placeholders)";
-
-    // Preparar la consulta
-    $stmt = $conexion->prepare($sql);
-
-    // Asignar los valores a los parámetros
-    $values = array_values($data);
-    $stmt->bind_param(str_repeat("s", count($values)), ...$values);
-
-    // Ejecutar la consulta
-    return $stmt->execute();
-}
-
 
 
 function listmascota($conexion,$id)
@@ -43,32 +19,22 @@ function listmascota($conexion,$id)
 
 }
 
-function updateRegister($conexion, $data, $id)
+function updatemascota($conexion, $data, $id)
 {
-    // Update 'fechaCreada' column with format 'YYYY-MM-01' using 'meses' parameter
-    $year = date('Y');
-    $month = $data['meses'];
-    $day = '01';
-    $data['fechaCreada'] = "$year-$month-$day";
     
     // Build the SQL query dynamically
-    $sql = "UPDATE registros SET ";
-    foreach ($data as $column => $value) {
-        $sql .= "$column = ?, ";
-    }
-    $sql = rtrim($sql, ", ");
-    $sql .= " WHERE id = ?";
+    $sql = "UPDATE mascota SET edad = ?, comportamiento = ?, estadosalud = ?, indicacionesextra = ?, nombremascota = ?, raza = ?, tipomascota = ? WHERE id = ?";
 
     // Prepare the statement
     $stmt = $conexion->prepare($sql);
 
-    // Assign the values to the parameters
-    $values = array_values($data);
-    $values[] = $id;
-    $stmt->bind_param(str_repeat("s", count($values)), ...$values);
+    // Bind the parameters
+    $stmt->bind_param("issssssi", $data['edad'], $data['comportamiento'], $data['estadosalud'], $data['indicacionesextra'], $data['nombre'], $data['raza'], $data['especie'], $id);
 
-    // Execute the query
-    return $stmt->execute();
+    // Execute the statement
+    $result = $stmt->execute();
+
+    return $result;
 }
 
 // Verify if receiving POST request with JSON
@@ -123,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit;
             }
             try {
-                $response = updateRegister($conexion, $data['datos'], $data['id']);
+                $response = updatemascota($conexion, $data, $data['idmascota']);
                 if ($response) {
                     echo json_encode(['success' => true, 'message' => 'update exitoso']);
                 } else {

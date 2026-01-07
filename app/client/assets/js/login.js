@@ -13,6 +13,7 @@ loginButton.addEventListener("click", function() {
     login(usuario.value, contrasena.value);
 });
 
+
 function login(usuario, contrasena) {
 
     fetch("controllers/login.php", {
@@ -37,6 +38,7 @@ function login(usuario, contrasena) {
             
         } else {
             console.log("Error al iniciar sesión");
+            alert("Error al iniciar sesión, por favor verifica tus credenciales.");
         }
     })
     .catch(error => {
