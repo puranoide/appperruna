@@ -1,5 +1,6 @@
 <?php
 
+
 function Registermascota($con,$comportamiento,$contrasenia,$edad,$estadosalud,$indicacionesextra,$linkimgurl,$nombremascota,$raza,$tipomascota,$vacunas)
 {
     $fechadeaceptacion = date("Y-m-d H:i:s");
