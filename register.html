@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Mascota - PetCare</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-50 font-sans">
+
+    <div class="min-h-screen flex items-center justify-center p-6">
+        <div class="max-w-md w-full bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
+
+            <div class="bg-indigo-600 p-8 text-white text-center">
+                <h1 class="text-2xl font-bold">Perfil de la Mascota</h1>
+                <p class="text-indigo-100 mt-1">Sube una foto donde se vea genial</p>
+            </div>
+
+            <form class="p-8 space-y-5" id="post-form-register">
+
+                <div class="flex flex-col items-center">
+                    <div class="relative group">
+                        <div id="preview-container"
+                            class="w-32 h-32 rounded-full border-4 border-indigo-50 overflow-hidden bg-gray-100 flex items-center justify-center relative">
+                            <span id="placeholder-icon" class="text-5xl text-gray-300">🐾</span>
+                            <img id="image-preview" src="#" alt="Vista previa"
+                                class="hidden w-full h-full object-cover">
+                        </div>
+
+                        <label for="pet-photo"
+                            class="absolute bottom-0 right-0 bg-indigo-600 p-2 rounded-full text-white cursor-pointer hover:bg-indigo-700 transition shadow-lg border-2 border-white">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                        </label>
+                        <input type="file" id="pet-photo" accept="image/*" class="hidden" name="linkFoto" required
+                            onchange="previewImage(event)">
+                    </div>
+                    <p class="mt-2 text-xs text-gray-400">Toca la cámara para cambiar foto</p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nombre de la mascota</label>
+                    <input type="text" required name="nombremascota"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
+                    <input type="password" required name="contrasenia"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Especie</label>
+                        <select name="tipomascota" required
+                            class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none bg-white">
+                            <option value="Perro">Perro</option>
+                            <option value="Gato">Gato</option>
+                            <option value="Conejo">Conejo</option>
+                            <option value="otro">Otro</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Edad (Años)</label>
+                        <input type="number" required name="edad"
+                            class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Especie</label>
+                        <select name="estadosalud" required
+                            class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none bg-white">
+                            <option value="Optimo">Optimo</option>
+                            <option value="Tiene observacion">Tiene observacion</option>
+                            <option value="Requiere cuidado especial">Requiere cuidado especial</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Raza</label>
+                        <input type="text" required name="raza"
+                            class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Indicaciones extra</label>
+                    <textarea rows="3" name="indicacionesextra"
+                        placeholder="Necesita algun medicamento especial?, tiene alguna enfermedad?,tiene habitos peligrosos?, etc." required
+                        class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none resize-none"></textarea>
+                </div>
+                <div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Sobre su comportamiento</label>
+                        <textarea rows="3" placeholder="¿Es amigable? ¿Le teme a los ruidos fuertes?"
+                            name="comportamiento" required
+                            class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none resize-none"></textarea>
+                    </div>
+
+                    <div class="flex items-center space-x-2">
+                        <input type="checkbox" id="vaccines" name="vacunas" required
+                            class="w-5 h-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                        <label for="vaccines" class="text-sm text-gray-600 italic">Cuenta con todas sus vacunas al
+                            día</label>
+                    </div>
+                </div>
+
+                <button type="submit" id="btnregistro"
+                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-2xl shadow-lg transition duration-300">
+                    Guardar Mascota
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="assets/js/register.js"></script>
+
+</body>
+
+</html>

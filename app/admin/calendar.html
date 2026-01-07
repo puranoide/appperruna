@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda de Citas - PetCare</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 font-sans">
+
+    <div class="max-w-4xl mx-auto p-4 md:p-8">
+        <div
+            class="bg-white rounded-t-3xl p-6 shadow-sm border-b flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+                <h2 id="month-year" class="text-2xl font-bold text-gray-800 capitalize">Enero 2024</h2>
+                <div class="flex bg-gray-100 rounded-lg p-1">
+                    <button onclick="changeMonth(-1)" class="p-2 hover:bg-white hover:shadow-sm rounded-md transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </button>
+                    <button onclick="changeMonth(1)" class="p-2 hover:bg-white hover:shadow-sm rounded-md transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path d="M9 5l7 7-7 7" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <button onclick="goToToday()"
+                class="px-4 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition font-medium">Hoy</button>
+        </div>
+
+        <div class="bg-white shadow-xl">
+            <div class="calendar-grid bg-indigo-50 border-b text-center py-3">
+                <div class="text-xs font-bold text-indigo-400 uppercase">Dom</div>
+                <div class="text-xs font-bold text-indigo-400 uppercase">Lun</div>
+                <div class="text-xs font-bold text-indigo-400 uppercase">Mar</div>
+                <div class="text-xs font-bold text-indigo-400 uppercase">Mié</div>
+                <div class="text-xs font-bold text-indigo-400 uppercase">Jue</div>
+                <div class="text-xs font-bold text-indigo-400 uppercase">Vie</div>
+                <div class="text-xs font-bold text-indigo-400 uppercase">Sáb</div>
+            </div>
+            <div id="calendar-days" class="calendar-grid min-h-[500px]"></div>
+        </div>
+    </div>
+
+    <div id="modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl transform transition-all">
+            <div id="modal-header" class="p-6 bg-indigo-600 text-white relative">
+                <button onclick="closeModal()" class="absolute top-4 right-4 text-white/80 hover:text-white">✕</button>
+                <h3 id="modal-pet-name" class="text-xl font-bold">Nombre Mascota</h3>
+                <p id="modal-service" class="text-indigo-100">Corte de pelo</p>
+            </div>
+            <div class="p-6 space-y-4">
+                <div class="flex items-center gap-3 text-gray-600">
+                    <span class="text-lg">⏰</span>
+                    <p id="modal-time" class="font-medium">10:00 AM</p>
+                </div>
+                <div class="flex items-center gap-3 text-gray-600">
+                    <span class="text-lg">👤</span>
+                    <p id="modal-owner">Dueño: Juan Pérez</p>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                    <p class="text-xs text-gray-400 uppercase font-bold mb-1">Notas:</p>
+                    <p id="modal-notes" class="text-sm text-gray-600 italic">"Es un poco nervioso con el agua."</p>
+                </div>
+                <button onclick="closeModal()"
+                    class="w-full py-3 bg-gray-100 text-gray-600 rounded-xl font-bold hover:bg-gray-200 transition">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- ESTRUCTURA JSON (Simulación de backend) ---
+        let citas = [
+            { id: 1, fecha: "2026-01-05", hora: "09:00", mascota: "Luna", servicio: "Baño y Corte", dueño: "Ana Sosa", notas: "Traer champú especial" },
+            { id: 2, fecha: "2026-01-05", hora: "14:30", mascota: "Thor", servicio: "Control Vacunas", dueño: "Carlos G.", notas: "Vacuna de la rabia" },
+            { id: 3, fecha: "2026-01-05", hora: "14:30", mascota: "Thor", servicio: "Control Vacunas", dueño: "Carlos G.", notas: "Vacuna de la rabia" },
+            { id: 4, fecha: "2026-01-05", hora: "14:30", mascota: "Thor", servicio: "Control Vacunas", dueño: "Carlos G.", notas: "Vacuna de la rabia" },
+            { id: 5, fecha: "2026-01-12", hora: "11:00", mascota: "Firulais", servicio: "Paseo", dueño: "Marta R.", notas: "Pasear solo por el parque" }
+        ];
+
+        let currentDate = new Date(2026, 0, 1); // Enero 2026
+
+        function renderCalendar() {
+            const grid = document.getElementById('calendar-days');
+            const monthYearLabel = document.getElementById('month-year');
+            grid.innerHTML = '';
+
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+
+            // Configurar cabecera
+            const monthNames = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+            monthYearLabel.innerText = `${monthNames[month]} ${year}`;
+
+            // Primer día del mes y total de días
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            // Rellenar espacios en blanco antes del primer día
+            for (let i = 0; i < firstDay; i++) {
+                grid.innerHTML += `<div class="p-2 border-r border-b bg-gray-50/50"></div>`;
+            }
+
+            // Crear cada día
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+                // Buscar citas para este día
+                const citasDia = citas.filter(c => c.fecha === dateStr);
+
+                let citasHtml = citasDia.map(c => `
+                    <div onclick="openModal(${c.id})" class="mt-1 px-2 py-1 bg-indigo-100 text-indigo-700 text-[10px] rounded border border-indigo-200 truncate cursor-pointer hover:bg-indigo-200 transition">
+                        ${c.hora} - ${c.mascota}
+                    </div>
+                `).join('');
+
+                grid.innerHTML += `
+                    <div class="min-h-[100px] p-2 border-r border-b hover:bg-gray-50 transition">
+                        <span class="text-sm font-semibold ${isToday(year, month, day) ? 'bg-indigo-600 text-white w-7 h-7 flex items-center justify-center rounded-full' : 'text-gray-500'}">${day}</span>
+                        <div class="mt-1">${citasHtml}</div>
+                    </div>
+                `;
+            }
+        }
+
+        // --- Funciones de Navegación ---
+        function changeMonth(step) {
+            currentDate.setMonth(currentDate.getMonth() + step);
+            renderCalendar();
+        }
+
+        function goToToday() {
+            currentDate = new Date();
+            renderCalendar();
+        }
+
+        function isToday(y, m, d) {
+            const today = new Date();
+            return y === today.getFullYear() && m === today.getMonth() && d === today.getDate();
+        }
+
+        // --- Lógica del PopUp ---
+        function openModal(id) {
+            const cita = citas.find(c => c.id === id);
+            if (!cita) return;
+
+            document.getElementById('modal-pet-name').innerText = cita.mascota;
+            document.getElementById('modal-service').innerText = cita.servicio;
+            document.getElementById('modal-time').innerText = `${cita.fecha} | ${cita.hora}`;
+            document.getElementById('modal-owner').innerText = `Dueño: ${cita.dueño}`;
+            document.getElementById('modal-notes').innerText = `"${cita.notas}"`;
+
+            document.getElementById('modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.add('hidden');
+        }
+
+        // Inicializar
+        renderCalendar();
+    </script>
+</body>
+
+</html>
