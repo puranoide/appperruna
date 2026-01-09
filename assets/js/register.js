@@ -73,7 +73,7 @@ function registrarMedico(registerobj, linkimgurl) {
                 //window.location.href = "gestionPosts.php";
                 btnregistro.disabled = false;
                 btnregistro.textContent = "registrar";
-                window.location.href = "app/client/login.php";
+                window.location.href = "app/client/login.html";
             }
         })
         .catch((error) => {

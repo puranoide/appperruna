@@ -1,8 +1,8 @@
 <?php
 $servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "appperruna"; 
+$username = "u685818680_appperruna";
+$password = "TX093e>GI~s5";
+$dbname = "u685818680_appperruna";
 // Create connection
 /*
 $servername = "localhost";
@@ -12,9 +12,11 @@ $dbname = "consultame";
 
 
 $servername = "localhost";
-$username = "u685818680_gabrieladmin02";
-$password = "7|Pvfsp~WjP";
-$dbname = "u685818680_consultamev2";*/
+$username = "u685818680_appperruna";
+$password = "TX093e>GI~s5";
+$dbname = "u685818680_appperruna";
+*/
+
 $conexion = new mysqli($servername, $username, $password, $dbname);
 // Check connection
 if ($conexion->connect_error) {

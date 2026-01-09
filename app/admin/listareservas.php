@@ -1,13 +1,61 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Visitas - PetCare</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-50 font-sans p-4 md:p-8">
 
+<body class="bg-gray-50 font-sans p-4 md:p-8">
+    <nav class="bg-white border-b border-gray-100 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20">
+
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer">
+                        <div class="bg-indigo-600 p-2 rounded-xl">
+                            <span class="text-2xl">🐾</span>
+                        </div>
+                        <span class="text-xl font-black text-gray-800 tracking-tight hidden sm:block">PetCare</span>
+                    </div>
+
+                    <div class="hidden md:ml-8 md:flex md:space-x-4">
+                        <a href="#" class="px-3 py-2 text-sm font-bold text-indigo-600 border-b-2 border-indigo-600">Reservas</a>
+                        <a href="reservar.php"
+                            class="px-3 py-2 text-sm font-medium text-gray-500 hover:text-indigo-600 transition">Calendario</a>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <button class="relative p-2 text-gray-400 hover:text-indigo-600 transition">
+                        <span class="absolute top-2 right-2 flex h-2 w-2">
+                            <span
+                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+                        </span>
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9">
+                            </path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-50 px-4 pt-2 pb-6 space-y-2">
+            <a href="#"
+                class="block px-4 py-3 text-base font-bold text-indigo-600 bg-indigo-50 rounded-xl">Dashboard</a>
+            <a href="#" class="block px-4 py-3 text-base font-medium text-gray-600 hover:bg-gray-50 rounded-xl">Mis
+                Mascotas</a>
+            <a href="#" class="block px-4 py-3 text-base font-medium text-gray-600 hover:bg-gray-50 rounded-xl">Buscar
+                Cuidador</a>
+            <a href="#"
+                class="block px-4 py-3 text-base font-medium text-gray-600 hover:bg-gray-50 rounded-xl">Agenda</a>
+        </div>
+    </nav>
     <div class="max-w-3xl mx-auto">
         <div class="mb-8">
             <h1 class="text-3xl font-bold text-gray-800">Solicitudes de Visita</h1>
@@ -16,121 +64,19 @@
 
         <div class="flex gap-2 mb-6">
             <span class="px-4 py-1 bg-indigo-600 text-white rounded-full text-sm font-medium">Pendientes</span>
-            <span class="px-4 py-1 bg-white border border-gray-200 text-gray-600 rounded-full text-sm font-medium hover:bg-gray-50 cursor-pointer">Historial</span>
+            <span
+                class="px-4 py-1 bg-white border border-gray-200 text-gray-600 rounded-full text-sm font-medium hover:bg-gray-50 cursor-pointer">Historial</span>
         </div>
 
         <div id="requests-list" class="space-y-4">
-            </div>
+        </div>
     </div>
 
-    <div id="toast" class="fixed bottom-5 right-5 bg-gray-800 text-white px-6 py-3 rounded-2xl shadow-2xl transform translate-y-20 opacity-0 transition-all duration-300">
+    <div id="toast"
+        class="fixed bottom-5 right-5 bg-gray-800 text-white px-6 py-3 rounded-2xl shadow-2xl transform translate-y-20 opacity-0 transition-all duration-300">
         Acción realizada con éxito
     </div>
-
-    <script>
-        // --- DATA JSON (Simulación de backend) ---
-        let solicitudes = [
-            {
-                id: 101,
-                mascota: "Kira",
-                especie: "Perro (Golden Retriever)",
-                foto: "https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&q=80&w=100",
-                dueño: "Beatriz López",
-                fecha: "2026-01-15",
-                hora: "10:00 - 12:00",
-                mensaje: "Kira necesita un paseo largo porque tengo una reunión importante.",
-                monto: "S/.25.00"
-            },
-            {
-                id: 102,
-                mascota: "Simba",
-                especie: "Gato (Persa)",
-                foto: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=100",
-                dueño: "Marcos Ruiz",
-                fecha: "2026-01-16",
-                hora: "17:00 - 18:00",
-                mensaje: "Solo es darle de comer y limpiar la arena. Es muy tímido.",
-                monto: "15.00€"
-            }
-        ];
-
-        function renderRequests() {
-            const container = document.getElementById('requests-list');
-            
-            if (solicitudes.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-20 bg-white rounded-3xl border-2 border-dashed border-gray-200">
-                        <p class="text-gray-400">No tienes solicitudes pendientes por ahora 🐾</p>
-                    </div>`;
-                return;
-            }
-
-            container.innerHTML = solicitudes.map(s => `
-                <div id="card-${s.id}" class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-col md:flex-row gap-6 transition-all hover:shadow-md">
-                    <div class="flex-shrink-0 flex items-center gap-4">
-                        <img src="${s.foto}" class="w-16 h-16 rounded-2xl object-cover border-2 border-indigo-50">
-                        <div>
-                            <h3 class="font-bold text-gray-800 text-lg">${s.mascota}</h3>
-                            <p class="text-xs text-indigo-600 font-semibold uppercase tracking-wider">${s.especie}</p>
-                        </div>
-                    </div>
-
-                    <div class="flex-grow space-y-2">
-                        <div class="flex flex-wrap gap-4 text-sm text-gray-600">
-                            <div class="flex items-center gap-1">
-                                <span>📅</span> <strong>${s.fecha}</strong>
-                            </div>
-                            <div class="flex items-center gap-1">
-                                <span>⏰</span> ${s.hora}
-                            </div>
-                            <div class="flex items-center gap-1 text-green-600 font-bold">
-                                <span>💰</span> ${s.monto}
-                            </div>
-                        </div>
-                        <p class="text-sm text-gray-500 italic bg-gray-50 p-3 rounded-xl border border-gray-100">
-                            "${s.mensaje}"
-                        </p>
-                        <p class="text-xs text-gray-400">Solicitado por: <span class="font-medium text-gray-600">${s.dueño}</span></p>
-                    </div>
-
-                    <div class="flex md:flex-col justify-center gap-2 border-t md:border-t-0 md:border-l border-gray-100 pt-4 md:pt-0 md:pl-6">
-                        <button onclick="handleAction(${s.id}, 'aprobar')" class="flex-1 px-6 py-2 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition active:scale-95 text-sm">
-                            Aprobar
-                        </button>
-                        <button onclick="handleAction(${s.id}, 'rechazar')" class="flex-1 px-6 py-2 bg-white text-red-500 border border-red-100 rounded-xl font-bold hover:bg-red-50 transition active:scale-95 text-sm">
-                            Rechazar
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function handleAction(id, type) {
-            const card = document.getElementById(`card-${id}`);
-            
-            // Animación de salida
-            card.classList.add('opacity-50', 'scale-95');
-            
-            setTimeout(() => {
-                // Eliminar del array (esto es lo que harías tras el fetch al backend)
-                solicitudes = solicitudes.filter(s => s.id !== id);
-                renderRequests();
-                showToast(type === 'aprobar' ? '✅ Visita confirmada' : '❌ Solicitud rechazada');
-            }, 400);
-        }
-
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            toast.innerText = message;
-            toast.classList.remove('translate-y-20', 'opacity-0');
-            
-            setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0');
-            }, 3000);
-        }
-
-        // Inicializar
-        renderRequests();
-    </script>
+    <script src="assets/js/reservas.js"></script>
 </body>
+
 </html>
