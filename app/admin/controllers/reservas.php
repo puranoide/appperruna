@@ -5,7 +5,12 @@
 function listreservasporconfirmar($conexion)
 {
     // Corregido: INNER JOIN va antes del WHERE
-    $query = "SELECT * FROM reservas 
+    $query = "SELECT reservas.id AS reserva_id, 
+                reservas.pet_id, 
+                reservas.date, 
+                reservas.comment, 
+                reservas.estadoreserva,
+                mascota.* FROM reservas 
               INNER JOIN mascota ON reservas.pet_id = mascota.id 
               WHERE reservas.estadoreserva = 0 ORDER BY reservas.date ASC";
               
@@ -30,17 +35,50 @@ function listreservasporconfirmar($conexion)
     }
 }
 
-function updatemascota($conexion, $data, $id)
+function listreservashistorial($conexion)
+{
+    // Corregido: INNER JOIN va antes del WHERE
+    $query = "SELECT reservas.id AS reserva_id, 
+                reservas.pet_id, 
+                reservas.date, 
+                reservas.comment, 
+                reservas.estadoreserva,
+                mascota.* FROM reservas 
+              INNER JOIN mascota ON reservas.pet_id = mascota.id 
+              WHERE reservas.estadoreserva != 0 ORDER BY reservas.date ASC";
+              
+    $stmt = $conexion->prepare($query);
+    
+    if (!$stmt) {
+        // Esto te ayudará a ver el error real de SQL si algo falla
+        die("Error en la preparación: " . $conexion->error);
+    }
+
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $reservas = [];
+
+    if ($result && $result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $reservas[] = $row;
+        }
+        return $reservas;
+    } else {
+        return false;
+    }
+}
+
+function updatereserva($conexion, $id, $estado)
 {
     
     // Build the SQL query dynamically
-    $sql = "UPDATE mascota SET edad = ?, comportamiento = ?, estadosalud = ?, indicacionesextra = ?, nombremascota = ?, raza = ?, tipomascota = ? WHERE id = ?";
+    $sql = "UPDATE reservas SET estadoreserva = ? WHERE id = ?";
 
     // Prepare the statement
     $stmt = $conexion->prepare($sql);
 
     // Bind the parameters
-    $stmt->bind_param("issssssi", $data['edad'], $data['comportamiento'], $data['estadosalud'], $data['indicacionesextra'], $data['nombre'], $data['raza'], $data['especie'], $id);
+    $stmt->bind_param("ii",$estado, $id);
 
     // Execute the statement
     $result = $stmt->execute();
@@ -91,7 +129,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($response) {
                 echo json_encode(['success' => true, 'data' => $response]);
             } else {
-                echo json_encode(['error' => 'list fallido']);
+                echo json_encode(['success' => false,'data'=>[]]);
+            }
+            break;
+        case 'getreservashistorial':
+            if (!$conexion) {
+                echo json_encode(['error' => 'No se pudo conectar a la base de datos']);
+                exit;
+            }
+            $response = listreservashistorial($conexion);
+            if ($response) {
+                echo json_encode(['success' => true, 'data' => $response]);
+            } else {
+                echo json_encode(['success' => false,'data'=>[]]);
             }
             break;
         case 'update':
@@ -100,7 +150,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit;
             }
             try {
-                $response = updatemascota($conexion, $data, $data['idmascota']);
+                $response = updatereserva($conexion, $data['id'], $data['estado']);
                 if ($response) {
                     echo json_encode(['success' => true, 'message' => 'update exitoso']);
                 } else {

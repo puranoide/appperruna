@@ -22,7 +22,8 @@
                     </div>
 
                     <div class="hidden md:ml-8 md:flex md:space-x-4">
-                        <a href="#" class="px-3 py-2 text-sm font-bold text-indigo-600 border-b-2 border-indigo-600">Reservas</a>
+                        <a href="#"
+                            class="px-3 py-2 text-sm font-bold text-indigo-600 border-b-2 border-indigo-600">Reservas</a>
                         <a href="reservar.php"
                             class="px-3 py-2 text-sm font-medium text-gray-500 hover:text-indigo-600 transition">Calendario</a>
                     </div>
@@ -63,9 +64,10 @@
         </div>
 
         <div class="flex gap-2 mb-6">
-            <span class="px-4 py-1 bg-indigo-600 text-white rounded-full text-sm font-medium">Pendientes</span>
-            <span
-                class="px-4 py-1 bg-white border border-gray-200 text-gray-600 rounded-full text-sm font-medium hover:bg-gray-50 cursor-pointer">Historial</span>
+            <span class="px-4 py-1 bg-indigo-600 text-white rounded-full text-sm font-medium"
+                id='pendientesreservas'>Pendientes</span>
+            <span class="px-4 py-1 bg-white text-gray-600 rounded-full text-sm font-medium"
+                id='historialreservas'>Historial</span>
         </div>
 
         <div id="requests-list" class="space-y-4">

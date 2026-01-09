@@ -8,7 +8,7 @@ $dbname = "u685818680_appperruna";
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "consultame"; 
+$dbname = "appperruna"; 
 
 
 $servername = "localhost";

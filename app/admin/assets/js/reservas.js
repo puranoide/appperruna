@@ -1,7 +1,19 @@
 // --- DATA JSON (Simulación de backend) ---
+const btnhistorial = document.getElementById('historialreservas');
+const btnporconfirmar = document.getElementById('pendientesreservas');
 const urlbackend = 'controllers/';
 var reservasbackend = {};
+var reservahistorialbackend = {};
 function getreservas() {
+    // Activar botón "Por confirmar"
+    btnporconfirmar.classList.remove('bg-white', 'text-gray-600');
+    btnporconfirmar.classList.add('bg-indigo-600', 'text-white');
+
+    // Desactivar botón "Historial"
+    btnhistorial.classList.remove('bg-indigo-600', 'text-white');
+    btnhistorial.classList.add('bg-white', 'text-gray-600');
+
+
     fetch(urlbackend + "reservas.php", {
         method: "POST",
         headers: {
@@ -13,6 +25,13 @@ function getreservas() {
     })
         .then((response) => response.json())
         .then((result) => {
+
+            if (result.error) {
+                console.error(result.error);
+                return;
+            }
+            //limpiar el array
+            reservasbackend = [];
             reservasbackend = result.data
             console.log(reservasbackend);
             // Inicializar vista
@@ -63,7 +82,7 @@ function renderRequests() {
     }
 
     container.innerHTML = reservasbackend.map(s => `
-                <div id="card-${s.id}" class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-col md:flex-row gap-6 transition-all hover:shadow-md">
+                <div id="card-${s.reserva_id}" class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-col md:flex-row gap-6 transition-all hover:shadow-md">
                     <div class="flex-shrink-0 flex items-center gap-4">
                         <img src="${s.linkimgurl}" class="w-16 h-16 rounded-2xl object-cover border-2 border-indigo-50">
                         <div>
@@ -89,12 +108,11 @@ function renderRequests() {
                         </p>
                         <p class="text-xs text-gray-400">Solicitado por: <span class="font-medium text-gray-600">${s.vacunas}</span></p>
                     </div>
-
                     <div class="flex md:flex-col justify-center gap-2 border-t md:border-t-0 md:border-l border-gray-100 pt-4 md:pt-0 md:pl-6">
-                        <button onclick="handleAction(${s.id}, 'aprobar')" class="flex-1 px-6 py-2 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition active:scale-95 text-sm">
+                        <button onclick="handleAction(${s.reserva_id}, 'aprobar',1)" class="flex-1 px-6 py-2 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition active:scale-95 text-sm">
                             Aprobar
                         </button>
-                        <button onclick="handleAction(${s.id}, 'rechazar')" class="flex-1 px-6 py-2 bg-white text-red-500 border border-red-100 rounded-xl font-bold hover:bg-red-50 transition active:scale-95 text-sm">
+                        <button onclick="handleAction(${s.reserva_id}, 'rechazar',2)" class="flex-1 px-6 py-2 bg-white text-red-500 border border-red-100 rounded-xl font-bold hover:bg-red-50 transition active:scale-95 text-sm">
                             Rechazar
                         </button>
                     </div>
@@ -102,7 +120,7 @@ function renderRequests() {
             `).join('');
 }
 
-function handleAction(id, type) {
+function handleAction(id, type, estado) {
     const card = document.getElementById(`card-${id}`);
 
     // Animación de salida
@@ -110,9 +128,13 @@ function handleAction(id, type) {
 
     setTimeout(() => {
         // Eliminar del array (esto es lo que harías tras el fetch al backend)
-        solicitudes = solicitudes.filter(s => s.id !== id);
-        renderRequests();
-        showToast(type === 'aprobar' ? '✅ Visita confirmada' : '❌ Solicitud rechazada');
+        actualizarestadoreserva(id, estado);
+        const actionMap = {
+            aprobar: '✅ Visita confirmada',
+            rechazar: '❌ Solicitud rechazada',
+            volveracola: '↩ Volver a cola'
+        };
+        showToast(actionMap[type]);
     }, 400);
 }
 
@@ -126,3 +148,119 @@ function showToast(message) {
     }, 3000);
 }
 
+
+function actualizarestadoreserva(id, estado) {
+    const dataupdate = {
+        action: "update",
+        id: id,
+        estado: estado
+    };
+    console.log(dataupdate);
+    fetch(urlbackend + "reservas.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataupdate),
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            //console.log(data);
+            if (data.success) {
+                console.log("respuesta :", data);
+                getreservas();
+            }
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+
+
+}
+
+btnhistorial.addEventListener('click', getreservashistorial);
+btnporconfirmar.addEventListener('click', getreservas);
+function getreservashistorial() {
+    btnporconfirmar.classList.remove('bg-indigo-600', 'text-white');
+    btnporconfirmar.classList.add('bg-white', 'text-gray-600');
+
+    btnhistorial.classList.remove('bg-gray-200', 'bg-white', 'text-gray-600');
+    btnhistorial.classList.add('bg-indigo-600', 'text-white');
+    fetch(urlbackend + "reservas.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            action: "getreservashistorial",
+        }),
+    })
+        .then((response) => response.json())
+        .then((result) => {
+
+            if (result.error) {
+                console.error(result.error);
+                return;
+            }
+            //limpiar el array
+            reservasbackend = [];
+            reservasbackend = result.data
+            console.log(reservasbackend);
+            // Inicializar vista
+            //updateDisplay();
+            // Inicializar
+            renderRequestshistorial();
+
+        })
+        .catch((error) => {
+            console.error("Error al listar registros:", error);
+        });
+}
+
+
+function renderRequestshistorial() {
+    const container = document.getElementById('requests-list');
+
+    if (reservasbackend.length === 0) {
+        container.innerHTML = `
+                    <div class="text-center py-20 bg-white rounded-3xl border-2 border-dashed border-gray-200">
+                        <p class="text-gray-400">No tienes historial 🐾</p>
+                    </div>`;
+        return;
+    }
+
+    container.innerHTML = reservasbackend.map(s => `
+                <div id="card-${s.reserva_id}" class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-col md:flex-row gap-6 transition-all hover:shadow-md">
+                    <div class="flex-shrink-0 flex items-center gap-4">
+                        <img src="${s.linkimgurl}" class="w-16 h-16 rounded-2xl object-cover border-2 border-indigo-50">
+                        <div>
+                            <h3 class="font-bold text-gray-800 text-lg">${s.nombremascota}</h3>
+                            <p class="text-xs text-indigo-600 font-semibold uppercase tracking-wider">${s.tipomascota}</p>
+                        </div>
+                    </div>
+
+                    <div class="flex-grow space-y-2">
+                        <div class="flex flex-wrap gap-4 text-sm text-gray-600">
+                            <div class="flex items-center gap-1">
+                                <span>📅</span> <strong>${s.date}</strong>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <span>⏰</span> 
+                            </div>
+                            <div class="flex items-center gap-1 text-green-600 font-bold">
+                                <span>💰</span>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-500 italic bg-gray-50 p-3 rounded-xl border border-gray-100">
+                            "${s.comment}"
+                        </p>
+                        <p class="text-xs text-gray-400">estado : <span class="font-medium text-gray-600">${s.estadoreserva === 1 ? 'aceptado' : s.estadoreserva === 2 ? 'rechazado' : ''}</span></p>
+                    </div>
+                    <div class="flex md:flex-col justify-center gap-2 border-t md:border-t-0 md:border-l border-gray-100 pt-4 md:pt-0 md:pl-6">
+                        <button onclick="handleAction(${s.reserva_id}, 'volveracola',0)" class="flex-1 px-6 py-2 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition active:scale-95 text-sm">
+                            mantener pendiente
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+}
