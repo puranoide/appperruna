@@ -68,6 +68,39 @@ function listreservashistorial($conexion)
     }
 }
 
+function listreservasconfirmadaspormes($conexion, $mes, $anio)
+{
+    // Corregido: INNER JOIN va antes del WHERE
+    $query = "SELECT reservas.id AS reserva_id, 
+                reservas.pet_id, 
+                reservas.date, 
+                reservas.comment, 
+                reservas.estadoreserva,
+                mascota.* FROM reservas 
+              INNER JOIN mascota ON reservas.pet_id = mascota.id 
+              WHERE reservas.estadoreserva =1 AND MONTH(reservas.date) = $mes AND YEAR(reservas.date) = $anio ORDER BY reservas.date ASC";
+              
+    $stmt = $conexion->prepare($query);
+    
+    if (!$stmt) {
+        // Esto te ayudará a ver el error real de SQL si algo falla
+        die("Error en la preparación: " . $conexion->error);
+    }
+
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $reservas = [];
+
+    if ($result && $result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $reservas[] = $row;
+        }
+        return $reservas;
+    } else {
+        return false;
+    }
+}
+
 function updatereserva($conexion, $id, $estado)
 {
     
@@ -138,6 +171,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit;
             }
             $response = listreservashistorial($conexion);
+            if ($response) {
+                echo json_encode(['success' => true, 'data' => $response]);
+            } else {
+                echo json_encode(['success' => false,'data'=>[]]);
+            }
+            break;
+        case 'getreservasactivaspormes':
+            if (!$conexion) {
+                echo json_encode(['error' => 'No se pudo conectar a la base de datos']);
+                exit;
+            }
+            $response = listreservasconfirmadaspormes($conexion, $data['mes'], $data['anio']);
             if ($response) {
                 echo json_encode(['success' => true, 'data' => $response]);
             } else {

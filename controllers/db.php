@@ -2,7 +2,7 @@
 $servername = "localhost";
 $username = "u685818680_appperruna";
 $password = "TX093e>GI~s5";
-$dbname = "u685818680_appperruna";
+$dbname = "u685818680_appperruna";  
 // Create connection
 /*
 $servername = "localhost";
