@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // El resultado ya viene con el formato success/message
             echo json_encode($result);
         } catch (Exception $e) {
-            echo json_encode(['success' => false, 'message' => 'Error inesperado: ' . $e->getMessage()]);
+            echo json_encode(['success' => false, 'message' => 'Error el DNI o correo ya existe']);
         }
             break;
             
