@@ -13,55 +13,38 @@ function Registermascota($con, $data, $linkimgurl) {
     $stmt = mysqli_prepare($con, $sql);
 
     if ($stmt === false) {
-        // Esto solo falla si hay un error de sintaxis en el SQL
-        return ['success' => false, 'message' => 'Error de preparación SQL: ' . mysqli_error($con)];
+        return ['success' => false, 'message' => 'Error de preparación: ' . mysqli_error($con)];
     }
 
     mysqli_stmt_bind_param($stmt, "sssssssssssdssssssss", 
-        $data['contrasenia'], 
-        $data['desparasitacion'], 
-        $data['direccion'], 
-        $data['esterilizado'], 
-        $data['fecha_nacimiento'], 
-        $data['nombremascota'], 
-        $data['parent_dni'], 
-        $data['parent_email'], 
-        $data['parent_emergencia'], 
-        $data['parent_nombre'], 
-        $data['parent_tel'], 
-        $data['peso'], 
-        $data['raza'], 
-        $data['sexo'], 
-        $data['tipomascota'], 
-        $data['vacuna_dia'], 
-        $data['vacuna_kc'], 
-        $data['veterinaria'],
-        $linkimgurl,
-        $fecharegistro
+        $data['contrasenia'], $data['desparasitacion'], $data['direccion'], 
+        $data['esterilizado'], $data['fecha_nacimiento'], $data['nombremascota'], 
+        $data['parent_dni'], $data['parent_email'], $data['parent_emergencia'], 
+        $data['parent_nombre'], $data['parent_tel'], $data['peso'], $data['raza'], 
+        $data['sexo'], $data['tipomascota'], $data['vacuna_dia'], $data['vacuna_kc'], 
+        $data['veterinaria'], $linkimgurl, $fecharegistro
     );
 
-    // Intentar ejecutar la inserción
     if (mysqli_stmt_execute($stmt)) {
-        return ['success' => true];
+        return ['success' => true, 'message' => 'Registro exitoso'];
     } else {
-        // SI LA EJECUCIÓN FALLA, revisamos si es por duplicados
         $errno = mysqli_errno($con);
         $error = mysqli_error($con);
         
-        // Código 1062 = Entrada duplicada
+        // EVALUACIÓN DE ERRORES ESPECÍFICOS
         if ($errno === 1062) {
-            // Evaluamos el mensaje de error de MySQL para saber qué campo falló
-            if (strpos($error, 'parent_dni') !== false || strpos($error, 'registro_usuarios_unique') !== false) {
-                return ['success' => false, 'message' => 'Este DNI ya se encuentra registrado.'];
+            // Buscamos el nombre de la llave UNIQUE que definiste en tu base de datos
+            if (strpos($error, 'registro_usuarios_unique_1') !== false) {
+                return ['success' => false, 'message' => 'Lo sentimos, este correo electrónico ya está registrado.'];
             } 
-            if (strpos($error, 'parent_email') !== false || strpos($error, 'registro_usuarios_unique_1') !== false) {
-                return ['success' => false, 'message' => 'Este correo electrónico ya está en uso.'];
+            if (strpos($error, 'registro_usuarios_unique') !== false) {
+                return ['success' => false, 'message' => 'Atención: El DNI ingresado ya existe en nuestro sistema.'];
             }
-            return ['success' => false, 'message' => 'El DNI o el Correo electrónico ya existen en nuestra base de datos.'];
+            return ['success' => false, 'message' => 'Dato duplicado: El DNI o Correo ya pertenecen a otra cuenta.'];
         }
         
-        // Si es cualquier otro error de SQL
-        return ['success' => false, 'message' => 'Error de base de datos: ' . $error];
+        // Si no es un error de duplicado, recién aquí mandamos el mensaje de SQL
+        return ['success' => false, 'message' => 'Error técnico: ' . $error];
     }
 }
 
