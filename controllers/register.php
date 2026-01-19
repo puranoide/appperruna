@@ -13,6 +13,20 @@ function Registermascota($con, $data, $linkimgurl) {
     $stmt = mysqli_prepare($con, $sql);
 
     if ($stmt === false) {
+                $errno = mysqli_errno($con);
+        $error = mysqli_error($con);
+        
+        // Error 1062: Duplicate entry
+        if ($errno === 1062) {
+            if (strpos($error, 'parent_dni') !== false) {
+                return ['success' => false, 'error_type' => 'duplicate', 'message' => 'Este DNI ya se encuentra registrado.'];
+            } elseif (strpos($error, 'parent_email') !== false) {
+                return ['success' => false, 'error_type' => 'duplicate', 'message' => 'Este correo electrónico ya está en uso.'];
+            }
+            return ['success' => false, 'error_type' => 'duplicate', 'message' => 'El DNI o Correo ya existen.'];
+        }
+        
+        return ['success' => false, 'error_type' => 'other', 'message' => $error];
         return ['success' => false, 'error_type' => 'sql', 'message' => mysqli_error($con)];
     }
 
@@ -42,20 +56,7 @@ function Registermascota($con, $data, $linkimgurl) {
     if (mysqli_stmt_execute($stmt)) {
         return ['success' => true];
     } else {
-        $errno = mysqli_errno($con);
-        $error = mysqli_error($con);
-        
-        // Error 1062: Duplicate entry
-        if ($errno === 1062) {
-            if (strpos($error, 'parent_dni') !== false) {
-                return ['success' => false, 'error_type' => 'duplicate', 'message' => 'Este DNI ya se encuentra registrado.'];
-            } elseif (strpos($error, 'parent_email') !== false) {
-                return ['success' => false, 'error_type' => 'duplicate', 'message' => 'Este correo electrónico ya está en uso.'];
-            }
-            return ['success' => false, 'error_type' => 'duplicate', 'message' => 'El DNI o Correo ya existen.'];
-        }
-        
-        return ['success' => false, 'error_type' => 'other', 'message' => $error];
+        return ['success' => false, 'error_type' => 'sql', 'message' => mysqli_error($con)];
     }
 }
 
