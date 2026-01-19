@@ -13,21 +13,8 @@ function Registermascota($con, $data, $linkimgurl) {
     $stmt = mysqli_prepare($con, $sql);
 
     if ($stmt === false) {
-                $errno = mysqli_errno($con);
-        $error = mysqli_error($con);
-        
-        // Error 1062: Duplicate entry
-        if ($errno === 1062) {
-            if (strpos($error, 'parent_dni') !== false) {
-                return ['success' => false, 'error_type' => 'duplicate', 'message' => 'Este DNI ya se encuentra registrado.'];
-            } elseif (strpos($error, 'parent_email') !== false) {
-                return ['success' => false, 'error_type' => 'duplicate', 'message' => 'Este correo electrónico ya está en uso.'];
-            }
-            return ['success' => false, 'error_type' => 'duplicate', 'message' => 'El DNI o Correo ya existen.'];
-        }
-        
-        return ['success' => false, 'error_type' => 'other', 'message' => $error];
-        return ['success' => false, 'error_type' => 'sql', 'message' => mysqli_error($con)];
+        // Esto solo falla si hay un error de sintaxis en el SQL
+        return ['success' => false, 'message' => 'Error de preparación SQL: ' . mysqli_error($con)];
     }
 
     mysqli_stmt_bind_param($stmt, "sssssssssssdssssssss", 
@@ -53,10 +40,28 @@ function Registermascota($con, $data, $linkimgurl) {
         $fecharegistro
     );
 
+    // Intentar ejecutar la inserción
     if (mysqli_stmt_execute($stmt)) {
         return ['success' => true];
     } else {
-        return ['success' => false, 'error_type' => 'sql', 'message' => mysqli_error($con)];
+        // SI LA EJECUCIÓN FALLA, revisamos si es por duplicados
+        $errno = mysqli_errno($con);
+        $error = mysqli_error($con);
+        
+        // Código 1062 = Entrada duplicada
+        if ($errno === 1062) {
+            // Evaluamos el mensaje de error de MySQL para saber qué campo falló
+            if (strpos($error, 'parent_dni') !== false || strpos($error, 'registro_usuarios_unique') !== false) {
+                return ['success' => false, 'message' => 'Este DNI ya se encuentra registrado.'];
+            } 
+            if (strpos($error, 'parent_email') !== false || strpos($error, 'registro_usuarios_unique_1') !== false) {
+                return ['success' => false, 'message' => 'Este correo electrónico ya está en uso.'];
+            }
+            return ['success' => false, 'message' => 'El DNI o el Correo electrónico ya existen en nuestra base de datos.'];
+        }
+        
+        // Si es cualquier otro error de SQL
+        return ['success' => false, 'message' => 'Error de base de datos: ' . $error];
     }
 }
 
