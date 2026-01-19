@@ -1,126 +1,180 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Mascota - PetCare</title>
+    <title>Registro PetCare - Multi-paso</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .step-hidden { display: none; }
+    </style>
 </head>
-
 <body class="bg-gray-50 font-sans">
 
     <div class="min-h-screen flex items-center justify-center p-6">
-        <div class="max-w-md w-full bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
-
+        <div class="max-w-xl w-full bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
+            
             <div class="bg-indigo-600 p-8 text-white text-center">
-                <h1 class="text-2xl font-bold">Perfil de la Mascota</h1>
-                <p class="text-indigo-100 mt-1">Sube una foto donde se vea genial</p>
+                <h1 class="text-2xl font-bold">Registro de Mascota</h1>
+                <div class="flex justify-center items-center mt-4 space-x-4">
+                    <div id="dot-1" class="w-3 h-3 rounded-full bg-white transition-all duration-300"></div>
+                    <div class="h-1 w-10 bg-indigo-400 rounded"></div>
+                    <div id="dot-2" class="w-3 h-3 rounded-full bg-indigo-400 transition-all duration-300"></div>
+                    <div class="h-1 w-10 bg-indigo-400 rounded"></div>
+                    <div id="dot-3" class="w-3 h-3 rounded-full bg-indigo-400 transition-all duration-300"></div>
+                </div>
+                <p id="step-title" class="text-indigo-100 mt-2 text-sm font-medium uppercase tracking-wider">Paso 1: Perfil Pet Parent</p>
             </div>
 
-            <form class="p-8 space-y-5" id="post-form-register">
-
-                <div class="flex flex-col items-center">
-                    <div class="relative group">
-                        <div id="preview-container"
-                            class="w-32 h-32 rounded-full border-4 border-indigo-50 overflow-hidden bg-gray-100 flex items-center justify-center relative">
-                            <span id="placeholder-icon" class="text-5xl text-gray-300">🐾</span>
-                            <img id="image-preview" src="#" alt="Vista previa"
-                                class="hidden w-full h-full object-cover">
+            <form class="p-8 space-y-6" id="post-form-register" novalidate>
+                
+                <section id="step-1" class="space-y-4">
+                    <h2 class="text-lg font-semibold text-gray-800 border-b pb-2">Datos del Responsable</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Nombre Completo</label>
+                            <input type="text" name="parent_nombre" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none transition">
                         </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">DNI / Documento de Identidad</label>
+                            <input type="text" name="parent_dni" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico</label>
+                            <input type="email" name="parent_email" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Contacto Principal</label>
+                                <input type="tel" name="parent_tel" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Emergencia (Opcional)</label>
+                                <input type="tel" name="parent_emergencia" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Contraseña del Perfil</label>
+                            <input type="password" name="contrasenia" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                        </div>
+                    </div>
+                </section>
 
-                        <label for="pet-photo"
-                            class="absolute bottom-0 right-0 bg-indigo-600 p-2 rounded-full text-white cursor-pointer hover:bg-indigo-700 transition shadow-lg border-2 border-white">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
+                <section id="step-2" class="step-hidden space-y-4">
+                    <h2 class="text-lg font-semibold text-gray-800 border-b pb-2">Datos de la Mascota</h2>
+                    
+                    <div class="flex flex-col items-center mb-4">
+                        <div class="relative group">
+                            <div id="preview-container" class="w-28 h-28 rounded-full border-4 border-indigo-50 overflow-hidden bg-gray-100 flex items-center justify-center relative">
+                                <span id="placeholder-icon" class="text-4xl text-gray-300">🐾</span>
+                                <img id="image-preview" src="#" alt="Vista previa" class="hidden w-full h-full object-cover">
+                            </div>
+                            <label for="pet-photo" class="absolute bottom-0 right-0 bg-indigo-600 p-2 rounded-full text-white cursor-pointer hover:bg-indigo-700 transition shadow-lg border-2 border-white">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                </svg>
+                            </label>
+                            <input type="file" id="pet-photo" accept="image/*" class="hidden" name="linkFoto">
+                        </div>
+                        <p class="text-xs text-gray-400 mt-2">Sube una foto de tu mascota</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
+                            <input type="text" name="nombremascota" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Especie</label>
+                            <select name="tipomascota" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none bg-white">
+                                <option value="Perro">Perro</option>
+                                <option value="Gato">Gato</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Raza</label>
+                            <input type="text" name="raza" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Peso (kg)</label>
+                            <input type="number" step="0.1" name="peso" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">F. Nacimiento</label>
+                            <input type="date" name="fecha_nacimiento" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Sexo</label>
+                            <select name="sexo" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none bg-white">
+                                <option value="Macho">Macho</option>
+                                <option value="Hembra">Hembra</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Estado</label>
+                            <select name="esterilizado" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none bg-white">
+                                <option value="Esterilizado">Esterilizado</option>
+                                <option value="No esterilizado">No esterilizado</option>
+                            </select>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Dirección de Domicilio</label>
+                            <input type="text" name="direccion" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none">
+                        </div>
+                    </div>
+                </section>
+
+                <section id="step-3" class="step-hidden space-y-4">
+                    <h2 class="text-lg font-semibold text-gray-800 border-b pb-2">Salud y Seguridad</h2>
+                    
+                    <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                        <p class="text-xs text-indigo-800 leading-relaxed">Verifica que tu engreído cumple con estos requerimientos para garantizar un ambiente seguro:</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-3 p-3 border border-gray-100 rounded-xl hover:bg-gray-50 transition">
+                            <input type="checkbox" name="vacuna_dia" id="chk1" required class="w-5 h-5 text-indigo-600 rounded">
+                            <label for="chk1" class="text-sm text-gray-700">Certificado de Vacunación al día</label>
+                        </div>
+                        <div class="flex items-center space-x-3 p-3 border border-gray-100 rounded-xl hover:bg-gray-50 transition">
+                            <input type="checkbox" name="vacuna_kc" id="chk2" required class="w-5 h-5 text-indigo-600 rounded">
+                            <label for="chk2" class="text-sm text-gray-700">Vacuna KC (Tos de las perreras)</label>
+                        </div>
+                        <div class="flex items-center space-x-3 p-3 border border-gray-100 rounded-xl hover:bg-gray-50 transition">
+                            <input type="checkbox" name="desparasitacion" id="chk3" required class="w-5 h-5 text-indigo-600 rounded">
+                            <label for="chk3" class="text-sm text-gray-700">Desparasitación y Antipulgas vigente</label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Veterinaria de Confianza</label>
+                        <input type="text" name="veterinaria" required placeholder="Nombre de la clínica o médico" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                    </div>
+
+                    <div class="flex items-start space-x-2 pt-4">
+                        <input type="checkbox" id="declaracion" required class="mt-1 w-5 h-5 text-indigo-600 rounded">
+                        <label for="declaracion" class="text-xs text-gray-500 italic">
+                            Declaro que la información proporcionada es verídica y acepto entregar los certificados en caso sean solicitados.
                         </label>
-                        <input type="file" id="pet-photo" accept="image/*" class="hidden" name="linkFoto" required
-                            onchange="previewImage(event)">
                     </div>
-                    <p class="mt-2 text-xs text-gray-400">Toca la cámara para cambiar foto</p>
-                </div>
+                </section>
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Nombre de la mascota</label>
-                    <input type="text" required name="nombremascota"
-                        class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                <div class="flex gap-3 pt-4">
+                    <button type="button" id="prevBtn" class="hidden flex-1 bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-4 rounded-2xl transition duration-300">
+                        Atrás
+                    </button>
+                    <button type="button" id="nextBtn" class="flex-[2] bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-2xl shadow-lg transition duration-300">
+                        Siguiente
+                    </button>
+                    <button type="submit" id="btnregistro" class="hidden flex-[2] bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-2xl shadow-lg transition duration-300">
+                        Finalizar Registro
+                    </button>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
-                    <input type="password" required name="contrasenia"
-                        class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none transition">
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Especie</label>
-                        <select name="tipomascota" required
-                            class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none bg-white">
-                            <option value="Perro">Perro</option>
-                            <option value="Gato">Gato</option>
-                            <option value="Conejo">Conejo</option>
-                            <option value="otro">Otro</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Edad (Años)</label>
-                        <input type="number" required name="edad"
-                            class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none">
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Especie</label>
-                        <select name="estadosalud" required
-                            class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none bg-white">
-                            <option value="Optimo">Optimo</option>
-                            <option value="Tiene observacion">Tiene observacion</option>
-                            <option value="Requiere cuidado especial">Requiere cuidado especial</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Raza</label>
-                        <input type="text" required name="raza"
-                            class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Indicaciones extra</label>
-                    <textarea rows="3" name="indicacionesextra"
-                        placeholder="Necesita algun medicamento especial?, tiene alguna enfermedad?,tiene habitos peligrosos?, etc." required
-                        class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none resize-none"></textarea>
-                </div>
-                <div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Sobre su comportamiento</label>
-                        <textarea rows="3" placeholder="¿Es amigable? ¿Le teme a los ruidos fuertes?"
-                            name="comportamiento" required
-                            class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none resize-none"></textarea>
-                    </div>
-
-                    <div class="flex items-center space-x-2">
-                        <input type="checkbox" id="vaccines" name="vacunas" required
-                            class="w-5 h-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                        <label for="vaccines" class="text-sm text-gray-600 italic">Cuenta con todas sus vacunas al
-                            día</label>
-                    </div>
-                </div>
-
-                <button type="submit" id="btnregistro"
-                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-2xl shadow-lg transition duration-300">
-                    Guardar Mascota
-                </button>
             </form>
         </div>
     </div>
 
     <script src="assets/js/register.js"></script>
-
 </body>
-
 </html>
