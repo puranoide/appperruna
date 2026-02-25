@@ -4,9 +4,9 @@ function registerusuario($con, $data) {
     $fecharegistro = date("Y-m-d H:i:s");
     
     $sql = "INSERT INTO registro_usuarios (
-        contrasenia,direccion,parent_dni, parent_email, parent_emergencia, parent_nombre, 
+        contrasenia,parent_dni, parent_email, parent_emergencia, parent_nombre, 
         parent_tel, fecharegistro
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    ) VALUES (?, ?, ?, ?, ?, ?, ?)";
     
     $stmt = mysqli_prepare($con, $sql);
 
@@ -14,8 +14,7 @@ function registerusuario($con, $data) {
         return ['error' => 'Error de preparación: ' . mysqli_error($con)];
     }
 
-    mysqli_stmt_bind_param($stmt, "ssssssss", 
-        $data['contrasenia'], $data['direccion'], 
+    mysqli_stmt_bind_param($stmt, "sssssss",$data['contrasenia'],
         $data['parent_dni'], $data['parent_email'], $data['parent_emergencia'], 
         $data['parent_nombre'], $data['parent_tel'], $fecharegistro
     );
