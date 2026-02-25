@@ -1,32 +1,27 @@
 <?php
 
-function Registermascota($con, $data, $linkimgurl) {
+function registerusuario($con, $data) {
     $fecharegistro = date("Y-m-d H:i:s");
     
     $sql = "INSERT INTO registro_usuarios (
-        contrasenia, desparacitacion, direccion, esterilizado, fecha_nacimiento, 
-        nombremascota, parent_dni, parent_email, parent_emergencia, parent_nombre, 
-        parent_tel, peso, raza, sexo, tipomascota, 
-        vacuna_dia, vacuna_kc, veterinaria, linkfoto, fecharegistro
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        contrasenia,direccion,parent_dni, parent_email, parent_emergencia, parent_nombre, 
+        parent_tel, fecharegistro
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
     
     $stmt = mysqli_prepare($con, $sql);
 
     if ($stmt === false) {
-        return ['success' => false, 'message' => 'Error de preparación: ' . mysqli_error($con)];
+        return ['error' => 'Error de preparación: ' . mysqli_error($con)];
     }
 
-    mysqli_stmt_bind_param($stmt, "sssssssssssdssssssss", 
-        $data['contrasenia'], $data['desparasitacion'], $data['direccion'], 
-        $data['esterilizado'], $data['fecha_nacimiento'], $data['nombremascota'], 
+    mysqli_stmt_bind_param($stmt, "ssssssss", 
+        $data['contrasenia'], $data['direccion'], 
         $data['parent_dni'], $data['parent_email'], $data['parent_emergencia'], 
-        $data['parent_nombre'], $data['parent_tel'], $data['peso'], $data['raza'], 
-        $data['sexo'], $data['tipomascota'], $data['vacuna_dia'], $data['vacuna_kc'], 
-        $data['veterinaria'], $linkimgurl, $fecharegistro
+        $data['parent_nombre'], $data['parent_tel'], $fecharegistro
     );
 
     if (mysqli_stmt_execute($stmt)) {
-        return ['success' => true, 'message' => 'Registro exitoso'];
+        return ['success' => true, 'message' => 'Registro exitoso', 'id' => mysqli_insert_id($con)];
     } else {
         $errno = mysqli_errno($con);
         $error = mysqli_error($con);
@@ -35,16 +30,16 @@ function Registermascota($con, $data, $linkimgurl) {
         if ($errno === 1062) {
             // Buscamos el nombre de la llave UNIQUE que definiste en tu base de datos
             if (strpos($error, 'registro_usuarios_unique_1') !== false) {
-                return ['success' => false, 'message' => 'Lo sentimos, este correo electrónico ya está registrado.'];
+                return ['error' => 'Lo sentimos, este correo electrónico ya está registrado.'];
             } 
             if (strpos($error, 'registro_usuarios_unique') !== false) {
-                return ['success' => false, 'message' => 'Atención: El DNI ingresado ya existe en nuestro sistema.'];
+                return ['error' => 'Atención: El DNI ingresado ya existe en nuestro sistema.'];
             }
-            return ['success' => false, 'message' => 'Dato duplicado: El DNI o Correo ya pertenecen a otra cuenta.'];
+            return ['error' => 'Dato duplicado: El DNI o Correo ya pertenecen a otra cuenta.'];
         }
         
         // Si no es un error de duplicado, recién aquí mandamos el mensaje de SQL
-        return ['success' => false, 'message' => 'Error técnico: ' . $error];
+        return ['error' => 'Error técnico: ' . $error];
     }
 }
 
@@ -67,12 +62,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit;
             }
         try {
-            $result = Registermascota($conexion, $data, $data['linkimgurl']);
+            $result = Registermascota($conexion, $data);
             // El resultado ya viene con el formato success/message
             echo json_encode($result);
         } catch (Exception $e) {
             echo json_encode(['success' => false, 'message' => 'Error el DNI o correo ya existe']);
         }
+            break;
+        case 'registeruser':
+            $response = registerusuario($conexion, $data);
+                if (isset($response['error'])) {
+                echo json_encode(['error' => $response['error']]); // ← verás el error exacto
+            } else {
+                echo json_encode(['success' => true, 'id' => $response['id']]);
+            }
             break;
             
         default:
