@@ -4,7 +4,7 @@ function registerusuario($con, $data) {
     $fecharegistro = date("Y-m-d H:i:s");
     
     $sql = "INSERT INTO registro_usuarios (
-        contrasenia,parent_dni, parent_email, parent_emergencia, parent_nombre, 
+        contrasenia, parent_dni, parent_email, parent_emergencia, parent_nombre, 
         parent_tel, fecharegistro
     ) VALUES (?, ?, ?, ?, ?, ?, ?)";
     
@@ -14,30 +14,30 @@ function registerusuario($con, $data) {
         return ['error' => 'Error de preparación: ' . mysqli_error($con)];
     }
 
-    mysqli_stmt_bind_param($stmt, "sssssss",$data['contrasenia'],
+    mysqli_stmt_bind_param($stmt, "sssssss",
+        $data['contrasenia'],
         $data['parent_dni'], $data['parent_email'], $data['parent_emergencia'], 
         $data['parent_nombre'], $data['parent_tel'], $fecharegistro
     );
 
-    if (mysqli_stmt_execute($stmt)) {
+    try { // ← ENVUELVE EL EXECUTE EN TRY/CATCH
+        mysqli_stmt_execute($stmt);
         return ['success' => true, 'message' => 'Registro exitoso', 'id' => mysqli_insert_id($con)];
-    } else {
-        $errno = mysqli_errno($con);
-        $error = mysqli_error($con);
-        
-        // EVALUACIÓN DE ERRORES ESPECÍFICOS
+
+    } catch (mysqli_sql_exception $e) {
+        $errno = $e->getCode();
+        $error = $e->getMessage();
+
         if ($errno === 1062) {
-            // Buscamos el nombre de la llave UNIQUE que definiste en tu base de datos
             if (strpos($error, 'registro_usuarios_unique_1') !== false) {
                 return ['error' => 'Lo sentimos, este correo electrónico ya está registrado.'];
-            } 
+            }
             if (strpos($error, 'registro_usuarios_unique') !== false) {
                 return ['error' => 'Atención: El DNI ingresado ya existe en nuestro sistema.'];
             }
             return ['error' => 'Dato duplicado: El DNI o Correo ya pertenecen a otra cuenta.'];
         }
-        
-        // Si no es un error de duplicado, recién aquí mandamos el mensaje de SQL
+
         return ['error' => 'Error técnico: ' . $error];
     }
 }
