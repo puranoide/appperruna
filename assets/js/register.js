@@ -19,7 +19,7 @@ form.addEventListener("submit", function (e) {
             objetoRegistro[key] = value;
         }
     });
-
+    console.log(objetoRegistro);
     registrarDueño(objetoRegistro);
 });
 
