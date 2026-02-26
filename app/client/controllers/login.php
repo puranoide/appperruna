@@ -6,18 +6,15 @@ function login($conexion, $usuario, $contrasena)
     // Sanitize inputs to prevent SQL injection
     $usuario = mysqli_real_escape_string($conexion, $usuario);
     $contrasena = mysqli_real_escape_string($conexion, $contrasena);
-    $query = "SELECT * FROM mascota WHERE nombremascota = ? AND contrasenia = ?";
+    $query = "SELECT * FROM registro_usuarios WHERE parent_dni = ? AND contrasenia = ?";
     $stmt = mysqli_prepare($conexion, $query);
     mysqli_stmt_bind_param($stmt, "ss", $usuario, $contrasena);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
     if (mysqli_num_rows($result) > 0) {
         $row = mysqli_fetch_assoc($result);
-      
         session_start();
-
-        $_SESSION['nombremascota'] = $row['nombremascota'];
-        $_SESSION['id'] = $row['id'];
+        $_SESSION['idusuario'] = $row['id'];
         return true;
     } else {
         return false;

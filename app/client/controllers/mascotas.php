@@ -1,5 +1,46 @@
 <?php
 
+function createRegister($conexion, $data) {
+    $fechadeaceptacion = date('Y-m-d');
+    
+    $query = "INSERT INTO mascota (
+        foto, Especie, raza, peso, nacimiento, 
+        sexo, estadosexual, domicilio, veterinariaconfianza, 
+        vacunacionaldia, vacunakc, desparacitacion, fechaaceptaciondeclaracion, 
+        id_dueño, nombre, comportamiento, indicacionesextras
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+    $stmt = $conexion->prepare($query);
+
+    // Agrega esto para ver el error exacto si vuelve a fallar
+    if (!$stmt) {
+        die(json_encode(['error' => 'Prepare failed: ' . $conexion->error]));
+    }
+
+    $stmt->bind_param(
+        "sssisssssiiisisss", 
+        $data['linkimgurl'],
+        $data['tipomascota'],
+        $data['raza'],
+        $data['peso'],                // i (int)
+        $data['fecha_nacimiento'],
+        $data['sexo'],
+        $data['estadosexual'],
+        $data['domiciliomascota'],
+        $data['veterinariaconfianza'],
+        $data['vacunas'],             // i
+        $data['vacuna_kc'],           // i
+        $data['desparasitacion'],     // i
+        $fechadeaceptacion,
+        $data['idusuario'],           // i
+        $data['nombremascota'],
+        $data['comportamiento'],
+        $data['indicacionesextra']
+    );
+
+    return $stmt->execute();
+}
+
 function listTodasMascotasPorUsuario($conexion, $idusuario) {
     // Ajusta 'id_dueño' al nombre real de la columna en tu tabla mascota
     $query = "SELECT * FROM mascota WHERE id_dueño = ?"; 
@@ -74,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // Resto del código...
             try {
-                $response = createRegister($conexion, $data['data']);
+                $response = createRegister($conexion, $data);
                 if ($response) {
                     echo json_encode(['success' => true, 'message' => 'insert exitoso']);
                 } else {

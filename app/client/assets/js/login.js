@@ -1,7 +1,7 @@
 
 
 var loginButton = document.getElementById("btnregistro");
-var usuario= document.getElementById("nombremascota");
+var usuario= document.getElementById("dniduenio");
 var contrasena= document.getElementById("contrasenia");
 //un lenguaje de eventos
 loginButton.addEventListener("click", function() {
