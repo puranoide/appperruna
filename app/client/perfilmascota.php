@@ -14,7 +14,7 @@ print_r($_SESSION);
 
 <body class="bg-gray-50 font-sans min-h-screen">
 
-    <input type="number" name="idmascota" id="idmascota" value="<?php echo $_SESSION['id']; ?>" hidden>
+    <input type="number" name="iddueño" id="iddueño" value="<?php echo $_SESSION['idusuario']; ?>" hidden>
 
     <nav class="bg-white border-b border-gray-100 sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -29,8 +29,8 @@ print_r($_SESSION);
                     </div>
 
                     <div class="hidden md:ml-8 md:flex md:space-x-4">
-                        <a href="#"
-                            class="px-3 py-2 text-sm font-bold text-indigo-600 border-b-2 border-indigo-600">Mi mascota</a>
+                        <a href="#" class="px-3 py-2 text-sm font-bold text-indigo-600 border-b-2 border-indigo-600">Mi
+                            mascota</a>
                         <a href="reservar.php"
                             class="px-3 py-2 text-sm font-medium text-gray-500 hover:text-indigo-600 transition">Agendar</a>
                     </div>
@@ -65,69 +65,13 @@ print_r($_SESSION);
         </div>
     </nav>
 
-    <script>
-    // Lógica simple para el menú móvil
-    const btn = document.getElementById('mobile-menu-button');
-    const menu = document.getElementById('mobile-menu');
-
-    btn.addEventListener('click', () => {
-        menu.classList.toggle('hidden');
-    });
-    </script>
-
-    <div class="max-w-2xl mx-auto p-4 md:pt-12">
-        <div class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-gray-100">
-
-            <div class="h-40 bg-gradient-to-r from-indigo-500 to-purple-500 relative">
-                <div class="absolute -bottom-12 left-8">
-                    <img id="display-photo"
-                        src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=200"
-                        class="w-32 h-32 rounded-[2rem] border-4 border-white object-cover shadow-lg bg-gray-200">
-                </div>
-            </div>
-
-            <div class="pt-16 p-8">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <h1 id="display-name" class="text-3xl font-black text-gray-800">Max</h1>
-                        <p id="display-species" class="text-indigo-600 font-bold tracking-wide uppercase text-sm">Perro
-                            • Beagle</p>
-                    </div>
-                    <button onclick="openEditModal()"
-                        class="flex items-center gap-2 px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-2xl font-bold transition">
-                        <span>✏️</span> Editar
-                    </button>
-                </div>
-
-                <div class="grid grid-cols-3 gap-4 my-8">
-                    <div class="bg-indigo-50 p-4 rounded-3xl text-center">
-                        <p class="text-xs text-indigo-400 font-bold uppercase">Edad</p>
-                        <p id="display-age" class="text-xl font-black text-indigo-700">3 años</p>
-                    </div>
-                    <div class="col-span-2 bg-orange-50 p-4 rounded-3xl text-center">
-                        <p class="text-xs text-orange-400 font-bold uppercase">Salud</p>
-                        <p id="display-health" class="text-xl font-black text-orange-700">Óptima</p>
-                    </div>
-                </div>
-
-                <div class="space-y-2">
-                    <h3 class="font-bold text-gray-800">Mi comportamiento</h3>
-                    <p id="display-bio" class="text-gray-500 leading-relaxed italic">
-                        "Me encanta perseguir pelotas de tenis y soy muy amigable con otros perros. Odio el sonido de la
-                        aspiradora."
-                    </p>
-                </div>
-
-                <div class="space-y-2">
-                    <h3 class="font-bold text-gray-800">Indicaciones extras</h3>
-                    <p id="display-indicaciones-extras" class="text-gray-500 leading-relaxed italic">
-                        "Me encanta perseguir pelotas de tenis y soy muy amigable con otros perros. Odio el sonido de la
-                        aspiradora."
-                    </p>
-                </div>
-            </div>
+    <div class="max-w-7xl mx-auto p-4 md:pt-12">
+    <h2 class="text-3xl font-black text-gray-800 mb-8">Mis Mascotas</h2>
+    
+    <div id="pets-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         </div>
-    </div>
+</div>
+
 
     <div id="edit-modal"
         class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">

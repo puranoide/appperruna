@@ -1,137 +1,69 @@
-const idmascota = document.getElementById('idmascota').value
-var mascotabackend = {};
+const idusuario = document.getElementById('iddueño').value; // El ID del dueño
+let listaMascotas = []; 
 const urlbackend = 'controllers/';
-function getmascota(idmascota) {
+function getmascotas() {
     fetch(urlbackend + "mascotas.php", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-            action: "get",
-            idmascota: idmascota
+            action: "get_all_by_user", // Asegúrate de manejar esta acción en tu PHP
+            idusuario: idusuario
         }),
     })
-        .then((response) => response.json())
-        .then((result) => {
-            mascotabackend = result.data
-            console.log(mascotabackend);
-            // Inicializar vista
-            updateDisplay();
-
-        })
-        .catch((error) => {
-            console.error("Error al listar registros:", error);
-        });
-}
-
-getmascota(idmascota);
-
-// ESTRUCTURA JSON (Estado inicial de la mascota)
-let mascota = {
-    nombre: "Max",
-    especie: "Perro • Beagle",
-    edad: "3 años",
-    peso: "12 kg",
-    salud: "Óptima",
-    bio: "Me encanta perseguir pelotas de tenis y soy muy amigable con otros perros. Odio el sonido de la aspiradora.",
-    foto: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=200"
-};
-
-// Función para actualizar la vista principal
-function updateDisplay() {
-    document.getElementById('display-name').innerText = mascotabackend.nombremascota;
-    document.getElementById('display-species').innerText = mascotabackend.tipomascota+" • "+mascotabackend.raza;
-    document.getElementById('display-age').innerText = mascotabackend.edad;
-    document.getElementById('display-bio').innerText = `"${mascotabackend.comportamiento}"`;
-    document.getElementById('display-photo').src = mascotabackend.linkimgurl||"https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=200";
-    document.getElementById('display-health').innerText = mascotabackend.estadosalud;
-    document.getElementById('display-indicaciones-extras').innerText = mascotabackend.indicacionesextra;
-}
-
-// Lógica del PopUp
-function openEditModal() {
-    // Cargar datos del JSON al Formulario
-    document.getElementById('input-name').value = mascotabackend.nombremascota;
-    document.getElementById('input-species').value = mascotabackend.tipomascota;
-    document.getElementById('input-raza').value = mascotabackend.raza;
-    document.getElementById('input-comportamiento').value = mascotabackend.comportamiento;
-    document.getElementById('input-indicaciones-extras').value = mascotabackend.indicacionesextra;
-    document.getElementById('input-age').value = mascotabackend.edad;
-    const select = document.getElementById('input-estadosalud');
-    const option = Array.from(select.options).find(o => o.value === mascotabackend.estadosalud);
-    if (option) {
-        select.value = option.value;
-    } else {
-        console.warn(`No se encontró el estado "${mascotabackend.estadosalud}" en la lista de opciones`);
-    }
-    const modal = document.getElementById('edit-modal');
-    const content = document.getElementById('modal-content');
-
-    modal.classList.remove('hidden');
-    setTimeout(() => {
-        content.classList.remove('scale-95', 'opacity-0');
-    }, 10);
-}
-
-function closeEditModal() {
-    const content = document.getElementById('modal-content');
-    content.classList.add('scale-95', 'opacity-0');
-    setTimeout(() => {
-        document.getElementById('edit-modal').classList.add('hidden');
-    }, 300);
-}
-
-// Manejar el envío del formulario
-document.getElementById('edit-form').onsubmit = function (e) {
-    e.preventDefault();
-    mascota = {};
-    mascota.idmascota = document.getElementById('input-idmascota-edit').value
-    // Actualizar el objeto JSON (Aquí harías tu fetch POST/PATCH)
-    mascota.nombre = document.getElementById('input-name').value;
-    mascota.especie = document.getElementById('input-species').value;
-    mascota.raza = document.getElementById('input-raza').value;
-    mascota.estadosalud = document.getElementById('input-estadosalud').value;
-    mascota.edad=document.getElementById('input-age').value;
-    mascota.comportamiento = document.getElementById('input-comportamiento').value;
-    mascota.indicacionesextra = document.getElementById('input-indicaciones-extras').value;
-
-    console.log(mascota);
-
-    
-    actualizarMascota(mascota);
-    closeEditModal();
-    alert("Se actualizaron los datos de tu mascota");
-    window.location.reload();
-
-    console.log("Datos listos para enviar al backend:", mascota);
-};
-
-
-function actualizarMascota(updatemascotaobjeto) {
-    document.getElementById('save-changes').disabled = true;
-    document.getElementById('save-changes').innerText = 'Guardando...';
-    const dataregister = {
-        action: "update",
-        ...updatemascotaobjeto,
-    };
-    console.log(dataregister);
-    fetch(urlbackend + "mascotas.php", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(dataregister),
+    .then(res => res.json())
+    .then(result => {
+        listaMascotas = result.data || []; // Si no hay, es un array vacío
+        renderPetsGrid();
     })
-        .then((response) => response.json())
-        .then((data) => {
-            //console.log(data);
-            if (data.success) {
-                console.log("respuesta :", data);
-                
-            }
-        })
-        .catch((error) => {
-            console.log(error);
-        });
+    .catch(err => console.error("Error:", err));
 }
+
+function renderPetsGrid() {
+    const grid = document.getElementById('pets-grid');
+    grid.innerHTML = ''; // Limpiar
+
+    // 1. Renderizar mascotas existentes
+    listaMascotas.forEach(pet => {
+        grid.innerHTML += `
+            <div class="bg-white rounded-[2.5rem] shadow-lg overflow-hidden border border-gray-100 flex flex-col">
+                <div class="h-32 bg-gradient-to-r from-indigo-500 to-purple-500 relative">
+                    <img src="${pet.linkimgurl || 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?q=80&w=200'}" 
+                         class="absolute -bottom-6 left-6 w-20 h-20 rounded-2xl border-4 border-white object-cover shadow-md bg-gray-200">
+                </div>
+                <div class="pt-10 p-6 flex-grow">
+                    <h3 class="text-xl font-black text-gray-800">${pet.nombremascota}</h3>
+                    <p class="text-indigo-600 font-bold text-xs uppercase">${pet.tipomascota} • ${pet.raza}</p>
+                    <div class="flex gap-2 mt-4">
+                        <button onclick="openEditModal(${pet.id})" class="text-sm bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-xl font-bold transition">Editar</button>
+                        <a href="detalles_mascota.php?id=${pet.id}" class="text-sm bg-indigo-50 text-indigo-600 hover:bg-indigo-100 px-4 py-2 rounded-xl font-bold transition">Ver más</a>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    // 2. Agregar el mosaico de "Agregar Mascota"
+    grid.innerHTML += `
+        <div onclick="openAddModal()" class="border-4 border-dashed border-gray-200 rounded-[2.5rem] flex flex-col items-center justify-center p-8 min-h-[250px] cursor-pointer hover:border-indigo-300 hover:bg-indigo-50 transition group">
+            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center text-3xl group-hover:bg-indigo-600 group-hover:text-white transition">
+                +
+            </div>
+            <p class="mt-4 font-black text-gray-400 group-hover:text-indigo-600">Agregar nueva mascota</p>
+        </div>
+    `;
+}
+function openEditModal(petId) {
+    // Buscar la mascota en nuestra lista local
+    const pet = listaMascotas.find(p => p.id == petId);
+    if(!pet) return;
+
+    // Llenar el formulario con los datos de esa mascota específica
+    document.getElementById('input-idmascota-edit').value = pet.id;
+    document.getElementById('input-name').value = pet.nombremascota;
+    // ... resto de los campos ...
+    
+    // Mostrar modal
+    document.getElementById('edit-modal').classList.remove('hidden');
+}
+// Llamar a la función al cargar
+getmascotas();

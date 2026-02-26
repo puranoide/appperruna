@@ -1,6 +1,19 @@
 <?php
 
+function listTodasMascotasPorUsuario($conexion, $idusuario) {
+    // Ajusta 'id_dueño' al nombre real de la columna en tu tabla mascota
+    $query = "SELECT * FROM mascota WHERE id_dueño = ?"; 
+    $stmt = $conexion->prepare($query);
+    $stmt->bind_param("i", $idusuario);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
+    $mascotas = [];
+    while ($row = $result->fetch_assoc()) {
+        $mascotas[] = $row;
+    }
+    return $mascotas;
+}
 
 function listmascota($conexion,$id)
 {
@@ -82,6 +95,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 echo json_encode(['error' => 'list fallido']);
             }
+            break;
+        case 'get_all_by_user': // Nuevo caso para el frontend
+                if (!$conexion) {
+                    echo json_encode(['error' => 'No se pudo conectar']);
+                    exit;
+                }
+                $response = listTodasMascotasPorUsuario($conexion, $data['idusuario']);
+             // Devolvemos el array completo
+                echo json_encode(['success' => true, 'data' => $response]);
             break;
         case 'update':
             if (!$conexion) {
