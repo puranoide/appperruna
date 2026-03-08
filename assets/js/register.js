@@ -113,6 +113,7 @@ function obtenerusuario(id) {
                 //tengo que redirigir a la pagina main del usuario con una sesion mediante id que carge los datos del usuario
                 
                 mandarcorreo(data);
+                setTimeout(() => window.location.href = "app/client/perfilmascota.php", 2500);
 
                 // Redirigir o mostrar éxito aquí
             } else {
