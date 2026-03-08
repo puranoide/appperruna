@@ -2,7 +2,7 @@
 function enviarCorreoInteresado($data)
 {
     $parent_dni = $data['parent_dni'];
-    $contrasenia = $data['apellidos'];
+    $contrasenia = $data['contrasenia'];
     $mensaje = "Hola hemos recidido tus datos y generamos tu perfil: usuario:" . $parent_dni. " Contraseña: ". $contrasenia;
     // Validación básica
     if (empty($nombres) || empty($email) || empty($mensaje)) {
