@@ -1,4 +1,37 @@
 <?php
+function enviarCorreoInteresado($data)
+{
+    $parent_dni = $data['parent_dni'];
+    $contrasenia = $data['apellidos'];
+    $mensaje = "Hola hemos recidido tus datos y generamos tu perfil: usuario:" . $parent_dni. " Contraseña: ". $contrasenia;
+    // Validación básica
+    if (empty($nombres) || empty($email) || empty($mensaje)) {
+        return false;
+        exit;
+    }
+
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        return false;
+        exit;
+    }
+
+    // Sanitizar el correo electrónico
+    $email = filter_var($email, FILTER_SANITIZE_EMAIL);
+
+    // Datos del correo
+    $para = $data['parent_email'];
+    $asunto = "Perfil de dueño";
+    $cabecera = "From: no-reply@slategrey-coyote-524330.hostingersite.com";
+    $mail = mail($para, $asunto, $mensaje, $cabecera);
+
+    // Enviar el correo
+    if ($mail) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 
 function registerusuario($con, $data) {
     $fecharegistro = date("Y-m-d H:i:s");
@@ -74,6 +107,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 echo json_encode(['error' => $response['error']]); // ← verás el error exacto
             } else {
                 echo json_encode(['success' => true, 'id' => $response['id']]);
+            }
+            break;
+        case 'mandarcorreo':
+            $response = mandarcorreo($data);
+            if (isset($response['error'])) {
+                echo json_encode(['error' => $response['error']]); // ← verás el error exacto
+            } else {
+                echo json_encode(['success' => true]);
             }
             break;
             

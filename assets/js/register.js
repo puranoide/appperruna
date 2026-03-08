@@ -74,17 +74,82 @@ function crearsesioninicial(id) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(dataupdate),
     }).then(res => res.json())
-    .then(data => {
+        .then(data => {
             if (data.success) {
                 console.log("Respuesta exitosa:", data);
                 //tengo que redirigir a la pagina main del usuario con una sesion mediante id que carge los datos del usuario
                 alert("Se ha registrado con exito");
-                window.location.href = "app/client/perfilmascota.php";
+                obtenerusuario(id);
+                //setTimeout(() => window.location.href = "app/client/perfilmascota.php", 1500);
 
                 // Redirigir o mostrar éxito aquí
             } else {
                 // Aquí capturamos los errores controlados ('Lo sentimos, este correo...')
                 alert("Atención: " + (data.error || "No se pudo registrar"));
+                resetButton();
+            }
+        })
+        .catch(err => {
+            console.error("Error capturado:", err.message);
+            alert("Ocurrió un error técnico. Revisa la consola.");
+            resetButton();
+        });
+}
+
+function obtenerusuario(id) {
+    const dataupdate = {
+        action: "obtenerusuariobyid",
+        id: id
+    }
+
+    fetch("controllers/auth.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dataupdate),
+    }).then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                console.log("Respuesta exitosa:", data);
+                //tengo que redirigir a la pagina main del usuario con una sesion mediante id que carge los datos del usuario
+                
+                mandarcorreo(data);
+
+                // Redirigir o mostrar éxito aquí
+            } else {
+                // Aquí capturamos los errores controlados ('Lo sentimos, este correo...')
+                alert("Atención: " + (data.error || "No se pudo mandar correo,por que no se pudo obtener usuario"));
+                resetButton();
+            }
+        })
+        .catch(err => {
+            console.error("Error capturado:", err.message);
+            alert("Ocurrió un error técnico. Revisa la consola.");
+            resetButton();
+        });
+}
+
+function mandarcorreo(data) {
+        const dataupdate = {
+        action: "mandarcorreo",
+        ...data
+    }
+
+    fetch("controllers/register.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dataupdate),
+    }).then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                console.log("Respuesta exitosa:", data);
+                //tengo que redirigir a la pagina main del usuario con una sesion mediante id que carge los datos del usuario
+                alert("Se ha mandado correo con exitoy registrado con exito");
+
+
+                // Redirigir o mostrar éxito aquí
+            } else {
+                // Aquí capturamos los errores controlados ('Lo sentimos, este correo...')
+                alert("Atención: " + (data.error || "No se pudo mandar correo"));
                 resetButton();
             }
         })
