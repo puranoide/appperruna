@@ -110,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             break;
         case 'mandarcorreo':
-            $response = enviarCorreoInteresado($data);
+            $response = enviarCorreoInteresado($data['data']);
             if (isset($response['error'])) {
                 echo json_encode(['error' => $response['error']]); // ← verás el error exacto
             } else {
