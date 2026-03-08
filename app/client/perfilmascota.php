@@ -26,14 +26,38 @@ session_start();
                         <div class="bg-indigo-600 p-2 rounded-xl">
                             <span class="text-2xl">🐾</span>
                         </div>
-                        <span class="text-xl font-black text-gray-800 tracking-tight hidden sm:block">Luchi Petpackers</span>
+                        <span class="text-xl font-black text-gray-800 tracking-tight hidden sm:block">Luchi
+                            Petpackers</span>
                     </div>
 
                     <div class="hidden md:ml-8 md:flex md:space-x-4">
-                        <a href="#" class="px-3 py-2 text-sm font-bold text-indigo-600 border-b-2 border-indigo-600">Mi
-                            mascota</a>
-                        <a href="reservar.php"
-                            class="px-3 py-2 text-sm font-medium text-gray-500 hover:text-indigo-600 transition">Agendar</a>
+                        <a href="#" class="px-3 py-2 text-sm font-bold text-indigo-600 border-b-2 border-indigo-600">
+                            Mis mascotas
+                        </a>
+
+                        <div class="relative group">
+                            <a href="reservar.php"
+                                class="flex items-center px-3 py-2 text-sm font-medium text-gray-500 hover:text-indigo-600 transition">
+                                <span>Servicios</span>
+                                <svg class="w-4 h-4 ml-1 transition-transform group-hover:rotate-180" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </a>
+
+                            <div
+                                class="absolute left-0 w-48 mt-0 origin-top-left bg-white border border-gray-100 rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                                <div class="py-2">
+                                    <a href="paseos.php"
+                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">Hospedaje</a>
+                                    <a href="hospedaje.php"
+                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">Paseo</a>
+                                    <a href="baño.php"
+                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">Baño</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -266,7 +290,7 @@ session_start();
                     <div class="space-y-3">
                         <label
                             class="flex items-center p-3 rounded-xl border border-gray-100 hover:bg-gray-50 cursor-pointer transition">
-                            <input  required type="checkbox" id="chk-vacunas" class="w-4 h-4 text-indigo-600 rounded">
+                            <input required type="checkbox" id="chk-vacunas" class="w-4 h-4 text-indigo-600 rounded">
                             <span class="ml-3 text-sm text-gray-600">Certificado de Vacunación al día</span>
                         </label>
                         <label
@@ -276,7 +300,8 @@ session_start();
                         </label>
                         <label
                             class="flex items-center p-3 rounded-xl border border-gray-100 hover:bg-gray-50 cursor-pointer transition">
-                            <input required type="checkbox" id="chk-desparasitacion" class="w-4 h-4 text-indigo-600 rounded">
+                            <input required type="checkbox" id="chk-desparasitacion"
+                                class="w-4 h-4 text-indigo-600 rounded">
                             <span class="ml-3 text-sm text-gray-600">Desparasitación vigente</span>
                         </label>
 
@@ -307,13 +332,15 @@ session_start();
                     <div>
                         <label class="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1">Comportamiento</label>
                         <textarea name="comportamiento" rows="3"
-                            class="w-full px-4 py-3 rounded-2xl bg-gray-50 border border-transparent focus:border-indigo-500 focus:bg-white outline-none transition resize-none text-sm" placeholder="Escribe si tu mascota es sociable con otras o algún comportamiento que debamos tener en cuenta"></textarea >
+                            class="w-full px-4 py-3 rounded-2xl bg-gray-50 border border-transparent focus:border-indigo-500 focus:bg-white outline-none transition resize-none text-sm"
+                            placeholder="Escribe si tu mascota es sociable con otras o algún comportamiento que debamos tener en cuenta"></textarea>
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1">Indicaciones
                             Extras</label>
                         <textarea name="indicacionesextra" rows="3"
-                            class="w-full px-4 py-3 rounded-2xl bg-gray-50 border border-transparent focus:border-indigo-500 focus:bg-white outline-none transition resize-none text-sm" placeholder="Tiene algún requerimiento especial en su alimentación, paseos o medicación"></textarea >
+                            class="w-full px-4 py-3 rounded-2xl bg-gray-50 border border-transparent focus:border-indigo-500 focus:bg-white outline-none transition resize-none text-sm"
+                            placeholder="Tiene algún requerimiento especial en su alimentación, paseos o medicación"></textarea>
                     </div>
                     <div class="flex gap-3 pt-4">
                         <button type="button" onclick="nextStep(2)"
